@@ -17,12 +17,14 @@ import java.util.PriorityQueue;
 import java.util.Scanner;
 
 import javax.swing.JFileChooser;
+
 public class Main {
 
-	private Console c;
+	private Scanner s = new Scanner(System.in);
 
 	public Main() {
-		c = System.console();
+		print("Files are loaded from the bin folder");
+
 		Scanner s = loadFiles("Enter file name for training set\n");
 		while (s == null) {
 			s = loadFiles("Enter file name for training set\n");
@@ -30,7 +32,7 @@ public class Main {
 		if (s != null) {
 			List<Instance> trainingSet = new ArrayList<Instance>();
 			parseSet(trainingSet, s);
-
+			
 			s = loadFiles("Enter file name for test set\n");
 			while (s == null) {
 				s = loadFiles("Enter file name for test set\n");
@@ -43,11 +45,14 @@ public class Main {
 
 				if (askBoolean()) {
 
-					print("Please enter the minimum value for k");
+					print("Please enter the minimum value for k (inclusive)");
 					int minK = getK();
 					print("Please enter the maximum value for k");
 					int maxK = getK();
-
+					while (maxK > trainingSet.size()) {
+						print("K must be smaller than the number of instances in the training set.");
+						maxK = getK();
+					}
 					print("Save to file [Y/N] ?");
 
 					PrintWriter pW = null;
@@ -79,7 +84,7 @@ public class Main {
 		String fileName = "";
 		boolean valid = false;
 		while (!valid) {
-			fileName = c.readLine();
+			fileName = readLine();
 			if (fileName.equals("")) {
 				print("File name must not be empty");
 			}
@@ -89,6 +94,9 @@ public class Main {
 			valid = true;
 		}
 		try {
+			if (fileName.endsWith(".txt") == false) {
+				fileName = fileName.concat(".txt");
+			}
 			return new PrintWriter(fileName, "UTF-8");
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -101,7 +109,7 @@ public class Main {
 	public boolean askBoolean() {
 		String input = "";
 		while (true) {
-			input = c.readLine();
+			input = readLine();
 			if (input.equals("Y") || input.equals("y")) {
 				return true;
 			} else if (input.equals("N") || input.equals("n")) {
@@ -118,7 +126,7 @@ public class Main {
 	public int getK() {
 		int k = -1;
 		while (k < 0) {
-			String input = c.readLine();
+			String input = readLine();
 			if (input.matches("^-?\\d+$")) {
 				k = Integer.valueOf(input);
 				if (k < 0) {
@@ -145,18 +153,27 @@ public class Main {
 		if (pW != null) {
 			pW.println("Accuracy");
 		}
+		print("Print out progress? [Y/N]");
+		boolean output = askBoolean();
 		for (int i = minK; i <= maxK; i++) {
-			Classifier.classify(trainingSet, testSet, i); // TODO: Bug: when minK is not 0, when maxK is greater than number in trainingSet ?
+			Classifier.classify(trainingSet, testSet, i);
 
 			int correct = 0;
-			for (Instance inst : testSet) {
+			for (int j = 0; j < testSet.size(); j++) {
+				Instance inst = testSet.get(j);
+
+				if (output) {
+					System.out.println("Instance " + j + ": classified as: " + inst.classifiedName + " actual class: "
+							+ inst.className + " correct: " + inst.checkClassification());
+				}
+
 				if (inst.checkClassification()) {
 					correct++;
 				}
 			}
 			double correctness = (double) correct / (double) testSet.size();
 			if (pW != null) {
-				pW.println( String.valueOf(correctness));
+				pW.println(String.valueOf(correctness));
 				pW.flush();
 			}
 			print("Classifier accuracy for k = " + i + " : " + String.valueOf(correctness));
@@ -198,18 +215,21 @@ public class Main {
 	}
 
 	public Scanner loadFiles(String prompt) {
-		String input = c.readLine(prompt);
+		String input = readLine(prompt);
 		if (!input.contains("/")) {
 			if (!input.contains(".txt")) {
 				input = input.concat(".txt");
 			}
-			input = "./res/".concat(input);
 		}
 		try {
-			return new Scanner(new File(input));
+			URL url = getClass().getClassLoader().getResource("res/part1/" + input);
+			String path = url.getPath();
+			path = path.replaceAll("%20", " ");
+			System.out.println(path);
+			return new Scanner(new File(path));
 
 		} catch (FileNotFoundException e) {
-			print("Count not find the file at " + input);
+			print("Could not find the file at " + input);
 			return null;
 		}
 	}
@@ -220,7 +240,16 @@ public class Main {
 	 * @param s
 	 */
 	public void print(String s) {
-		c.printf(s + "\n");
+		System.out.println(s);
+	}
+
+	public String readLine(String prompt) {
+		System.out.println(prompt);
+		return s.nextLine();
+	}
+
+	public String readLine() {
+		return s.nextLine();
 	}
 
 }

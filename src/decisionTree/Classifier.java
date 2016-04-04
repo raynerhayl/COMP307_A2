@@ -139,9 +139,9 @@ public class Classifier {
 		majorityClass = majorityClass(trainingSet);
 
 		if (majorityClass.equals(classA)) {
-			majorityProbability =  classFrequency[0] / (double) trainingSet.size();
+			majorityProbability = classFrequency[0] / (double) trainingSet.size();
 		} else {
-			majorityProbability =  classFrequency[1] / (double) trainingSet.size();
+			majorityProbability = classFrequency[1] / (double) trainingSet.size();
 
 		}
 
@@ -151,5 +151,24 @@ public class Classifier {
 		attributes.addAll(this.attributes);
 
 		return buildTree(instances, attributes, 0);
+	}
+
+	public void classify(Node root) {
+		Node currentNode = root;
+		double correct = 0;
+		for (Instance instance : testSet) {
+			while (currentNode.lChild != null && currentNode.rChild != null) {
+				if (instance.get(currentNode.name)) {
+					currentNode = currentNode.lChild;
+				} else {
+					currentNode = currentNode.rChild;
+				}
+			}
+			instance.classifiedName = currentNode.name;
+			if(instance.classifiedName.equals(instance.className)){
+				correct++;
+			}
+		}
+		System.out.println(correct/testSet.size());
 	}
 }

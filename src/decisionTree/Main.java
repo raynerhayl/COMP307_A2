@@ -96,7 +96,6 @@ public class Main implements ActionListener {
 				node.pos[0] = start_x + x_step * (i + 1);
 				node.pos[1] = y;
 			}
-			System.out.println("");
 		}
 	}
 
@@ -111,6 +110,7 @@ public class Main implements ActionListener {
 					g.print("Classifying");
 					g.root = classifier.buildTree();
 					layoutTree(g.root);
+					classifier.classify(g.root);
 					g.print(String.valueOf(g.root.size()));
 					g.repaint();
 				}

@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 public class Node {
-	String attribute = "";
+	String name = "";
 	int[] pos = new int[2];
 	Node lChild;
 	Node rChild;
@@ -36,25 +36,25 @@ public class Node {
 		return size;
 	}
 
-	public Node(String att) {
-		attribute = att;
+	public Node(String name) {
+		this.name = name;
 	}
 
-	public Node(String att, double probibility, int depth) {
-		attribute = att;
+	public Node(String name, double probibility, int depth) {
+		this.name = name;
 		this.probibility = probibility;
 		this.depth = depth;
 	}
 
-	public Node(String att, Node l, Node r, int depth) {
-		this.attribute = att;
+	public Node(String name, Node l, Node r, int depth) {
+		this.name = name;
 		lChild = l;
 		rChild = r;
 		this.depth = depth;
 	}
 
 	public int width(Graphics2D g2) {
-		width = g2.getFontMetrics().stringWidth(attribute) + padding;
+		width = g2.getFontMetrics().stringWidth(name) + padding;
 		return width - padding;
 	}
 
@@ -161,7 +161,7 @@ public class Node {
 		g2.fillOval(pos[0] - width(g2) / 2 - padding, pos[1] - height(g2) / 2 - padding, width(g2) + padding * 2,
 				height(g2) + padding * 2);
 		g2.setColor(Color.white);
-		g2.drawString(attribute, pos[0] - width(g2) / 2, pos[1] + height(g2) / 2);
+		g2.drawString(name, pos[0] - width(g2) / 2, pos[1] + height(g2) / 2);
 
 	}
 }

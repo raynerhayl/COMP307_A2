@@ -123,7 +123,7 @@ public class GUI extends JFrame {
 				Node n = root.contains(e.getX(), e.getY());
 				if (n != null) {
 					selected_node = n;
-					println("Selected Node: " + n.attribute + " Probability: " + n.probibility);
+					println("Selected Node: " + n.name + " Probability: " + n.probibility);
 				}
 			}
 		}
