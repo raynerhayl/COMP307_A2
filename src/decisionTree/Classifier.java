@@ -153,7 +153,7 @@ public class Classifier {
 		return buildTree(instances, attributes, 0);
 	}
 
-	public void classify(Node root) {
+	public double classify(Node root) {
 		Node currentNode = root;
 		double correct = 0;
 		for (Instance instance : testSet) {
@@ -169,6 +169,6 @@ public class Classifier {
 				correct++;
 			}
 		}
-		System.out.println(correct/testSet.size());
+		return (correct/testSet.size());
 	}
 }

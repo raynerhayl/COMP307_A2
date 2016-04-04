@@ -122,8 +122,10 @@ public class GUI extends JFrame {
 			if (root != null) {
 				Node n = root.contains(e.getX(), e.getY());
 				if (n != null) {
-					selected_node = n;
-					println("Selected Node: " + n.name + " Probability: " + n.probibility);
+					if (n.lChild == null && n.rChild == null) {
+						selected_node = n;
+						println("Selected Leaf: " + n.name + " Probability of Correctness: " + n.probibility);
+					}
 				}
 			}
 		}

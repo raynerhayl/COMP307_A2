@@ -19,6 +19,9 @@ public class Main implements ActionListener {
 
 	Classifier classifier = new Classifier();
 
+	String trainingSet = "";
+	String testSet = ""; // file name of the two sets
+
 	public static void main(String[] args) {
 		new Main();
 	}
@@ -27,6 +30,15 @@ public class Main implements ActionListener {
 
 	public Main() {
 		g = new GUI(this);
+		g.root = new Node("Test Root Node");
+		g.root.lChild = new Node("True", 2, 2);
+		g.root.rChild = new Node("False", 2, 2);
+		layoutTree(g.root);
+
+		g.println("Please resize the window, and the text ouput screen so that that the root node is visible");
+		g.println("Then select a training set and test set. You can reload either set at any time");
+		g.println("There must be a test set and a training set currently loaded to classify");
+		g.println("");
 	}
 
 	public Set<Instance> loadFile(File file) {
@@ -63,7 +75,7 @@ public class Main implements ActionListener {
 				}
 				line++;
 			}
-			g.println("Loading Complete");
+			g.println("Loading Complete \n");
 
 			fileScanner.close();
 			return set;
@@ -99,20 +111,25 @@ public class Main implements ActionListener {
 		}
 	}
 
+	public void classify() {
+		g.println("Learning tree according to " + trainingSet);
+		g.println("Classifying " + testSet + "according to learned tree \n");
+		g.root = classifier.buildTree();
+		layoutTree(g.root);
+		double accuracy = classifier.classify(g.root);
+
+		g.print("Accuracy of classified instances " + String.valueOf(accuracy));
+		g.repaint();
+	}
+
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource().getClass().equals(JButton.class)) {
 			JButton source = (JButton) e.getSource();
 			String tag = source.getText();
 			if (tag.equals("Classify")) {
-				g.print("Classify pressed");
 				if (classifier.testSet != null && classifier.trainingSet != null) {
-					g.print("Classifying");
-					g.root = classifier.buildTree();
-					layoutTree(g.root);
-					classifier.classify(g.root);
-					g.print(String.valueOf(g.root.size()));
-					g.repaint();
+					classify();
 				}
 			}
 			if (tag.equals("Load Test Set") || tag.equals("Load Training Set")) {
@@ -121,12 +138,12 @@ public class Main implements ActionListener {
 				if (returnval == JFileChooser.APPROVE_OPTION) {
 					if (tag.equals("Load Test Set")) {
 						g.print("Loading test set: ");
-
+						testSet = fc.getSelectedFile().getName();
 						classifier.testSet = loadFile(fc.getSelectedFile());
 					}
 					if (tag.equals("Load Training Set")) {
 						g.print("Loading training set: ");
-
+						trainingSet = fc.getSelectedFile().getName();
 						classifier.trainingSet = loadFile(fc.getSelectedFile());
 					}
 
