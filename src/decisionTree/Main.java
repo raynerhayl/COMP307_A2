@@ -116,9 +116,11 @@ public class Main implements ActionListener {
 		g.println("Classifying " + testSet + "according to learned tree \n");
 		g.root = classifier.buildTree();
 		layoutTree(g.root);
-		double accuracy = classifier.classify(g.root);
+		double[] accuracies = classifier.classify(g.root);
 
-		g.print("Accuracy of classified instances " + String.valueOf(accuracy));
+		g.println("Accuracy of classified instances " + String.valueOf(accuracies[0]));
+		g.println("Accuracy of baseline classifier  " + String.valueOf(accuracies[1]));
+
 		g.repaint();
 	}
 
@@ -134,21 +136,26 @@ public class Main implements ActionListener {
 			}
 			if (tag.equals("Load Test Set") || tag.equals("Load Training Set")) {
 				JFileChooser fc = new JFileChooser();
+				File workingDirectory = new File(System.getProperty("user.dir"));
+				fc.setCurrentDirectory(workingDirectory);
 				int returnval = fc.showOpenDialog(g);
 				if (returnval == JFileChooser.APPROVE_OPTION) {
 					if (tag.equals("Load Test Set")) {
 						g.print("Loading test set: ");
 						testSet = fc.getSelectedFile().getName();
 						classifier.testSet = loadFile(fc.getSelectedFile());
+
 					}
 					if (tag.equals("Load Training Set")) {
 						g.print("Loading training set: ");
 						trainingSet = fc.getSelectedFile().getName();
 						classifier.trainingSet = loadFile(fc.getSelectedFile());
+
 					}
 
 				}
 			}
+
 		}
 	}
 

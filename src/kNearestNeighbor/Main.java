@@ -222,7 +222,7 @@ public class Main {
 			}
 		}
 		try {
-			URL url = getClass().getClassLoader().getResource("res/part1/" + input);
+			URL url = getClass().getClassLoader().getResource(input);
 			String path = url.getPath();
 			path = path.replaceAll("%20", " ");
 			System.out.println(path);

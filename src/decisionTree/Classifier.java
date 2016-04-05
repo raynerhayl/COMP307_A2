@@ -113,9 +113,23 @@ public class Classifier {
 				Set<Instance> trueInstances = sortInstances(attribute, true, instances);
 				Set<Instance> falseInstances = sortInstances(attribute, false, instances);
 
-				double avgImpurity = impurity(trueInstances)
-						* ((double) trueInstances.size() / (double) instances.size())
-						+ impurity(falseInstances) * ((double) falseInstances.size() / (double) instances.size());
+				double trueWI = 0;
+				double falseWI = 0;
+				
+				if (trueInstances.size() > 0) {
+					trueWI = impurity(trueInstances) * ((double) trueInstances.size() / (double) instances.size());
+				}
+
+				if (falseInstances.size() > 0) {
+					falseWI = impurity(falseInstances) * ((double) falseInstances.size() / (double) instances.size());
+				}
+
+				double avgImpurity = trueWI + falseWI;
+
+				if (bestAttribute.equals("")) {
+					System.out.print(avgImpurity + " " + trueInstances.size() + " " + falseInstances.size() + " ");
+					System.out.println((double) instances.size());
+				}
 
 				if (avgImpurity < bestImpurity) {
 					bestAttribute = attribute;
@@ -128,6 +142,10 @@ public class Classifier {
 			depth++;
 			Node left = buildTree(bestTrue, attributes, depth);
 			Node right = buildTree(bestFalse, attributes, depth);
+
+			if (bestAttribute.equals("")) {
+				System.out.println("HI");
+			}
 
 			return new Node(bestAttribute, left, right, depth - 1);
 		}
@@ -153,10 +171,11 @@ public class Classifier {
 		return buildTree(instances, attributes, 0);
 	}
 
-	public double classify(Node root) {
-		Node currentNode = root;
+	public double[] classify(Node root) {
 		double correct = 0;
+		double majorityCheck = 0;
 		for (Instance instance : testSet) {
+			Node currentNode = root;
 			while (currentNode.lChild != null && currentNode.rChild != null) {
 				if (instance.get(currentNode.name)) {
 					currentNode = currentNode.lChild;
@@ -165,10 +184,14 @@ public class Classifier {
 				}
 			}
 			instance.classifiedName = currentNode.name;
-			if(instance.classifiedName.equals(instance.className)){
+			if (instance.classifiedName.equals(instance.className)) {
 				correct++;
 			}
+			if (majorityClass.equals(instance.className)) {
+				majorityCheck++;
+			}
 		}
-		return (correct/testSet.size());
+		double[] results = new double[] { correct / testSet.size(), majorityCheck / testSet.size() };
+		return (results);
 	}
 }

@@ -54,6 +54,7 @@ public class GUI extends JFrame {
 				loadTr.addActionListener(main);
 				JButton classify = new JButton("Classify");
 				classify.addActionListener(main);
+
 				buttonP.add(classify);
 				buttonP.add(loadT);
 				buttonP.add(loadTr);
@@ -122,8 +123,9 @@ public class GUI extends JFrame {
 			if (root != null) {
 				Node n = root.contains(e.getX(), e.getY());
 				if (n != null) {
+					selected_node = n;
+
 					if (n.lChild == null && n.rChild == null) {
-						selected_node = n;
 						println("Selected Leaf: " + n.name + " Probability of Correctness: " + n.probibility);
 					}
 				}
