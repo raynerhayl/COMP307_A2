@@ -5,6 +5,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Contains the logic for creating a decision tree Classifier and also using it
+ * to actually classify an instance.
+ * 
+ * @author Haylem
+ *
+ */
 public class Classifier {
 	public List<String> attributes = new ArrayList<String>();
 
@@ -92,6 +99,19 @@ public class Classifier {
 		return nI;
 	}
 
+	/**
+	 * Recursively builds a decision tree according to the current training set
+	 * of instances. The algorithm follows what was taught in class (hopefully)
+	 * 
+	 * @param instances
+	 *            the set of instances left to train the classifier
+	 * @param attributes
+	 *            the set of attributes left to create the classifier
+	 * @param depth
+	 *            the current depth in the tree (to help with laying it out
+	 *            later)
+	 * @return
+	 */
 	private Node buildTree(Set<Instance> instances, Set<String> attributes, int depth) {
 		if (instances.isEmpty()) {
 			return new Node(majorityClass, majorityProbability, depth);
@@ -115,7 +135,7 @@ public class Classifier {
 
 				double trueWI = 0;
 				double falseWI = 0;
-				
+
 				if (trueInstances.size() > 0) {
 					trueWI = impurity(trueInstances) * ((double) trueInstances.size() / (double) instances.size());
 				}
@@ -125,11 +145,6 @@ public class Classifier {
 				}
 
 				double avgImpurity = trueWI + falseWI;
-
-				if (bestAttribute.equals("")) {
-					System.out.print(avgImpurity + " " + trueInstances.size() + " " + falseInstances.size() + " ");
-					System.out.println((double) instances.size());
-				}
 
 				if (avgImpurity < bestImpurity) {
 					bestAttribute = attribute;
@@ -143,14 +158,17 @@ public class Classifier {
 			Node left = buildTree(bestTrue, attributes, depth);
 			Node right = buildTree(bestFalse, attributes, depth);
 
-			if (bestAttribute.equals("")) {
-				System.out.println("HI");
-			}
-
 			return new Node(bestAttribute, left, right, depth - 1);
 		}
 	}
 
+	/**
+	 * Returns the root node of the learned decision tree according to the
+	 * current training set. Sets up the state for training, i.e. finding the
+	 * majority class and its probability.
+	 * 
+	 * @return
+	 */
 	public Node buildTree() {
 		double[] classFrequency = classFrequency(trainingSet);
 
@@ -171,6 +189,14 @@ public class Classifier {
 		return buildTree(instances, attributes, 0);
 	}
 
+	/**
+	 * Classifies each of the test instances according to the decision tree
+	 * attached to the given root node.
+	 * 
+	 * @param root
+	 *            the root of the learned decision tree to classify against.
+	 * @return
+	 */
 	public double[] classify(Node root) {
 		double correct = 0;
 		double majorityCheck = 0;

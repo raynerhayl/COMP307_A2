@@ -28,9 +28,9 @@ public class MakeImage implements MouseListener, MouseMotionListener{
   private static int margin = 10;
   private static int wd = 20;
 
-  private int rows = 10;
-  private int cols = 10;
-  private boolean[][] image = new boolean[rows][cols];
+  public int rows = 10;
+  public int cols = 10;
+  public boolean[][] image = new boolean[rows][cols];
   private String category = "other";
   private String categoryName;
   private int otherCount=0;

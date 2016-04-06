@@ -17,10 +17,9 @@ public class Instance {
 		image = new boolean[height][width];
 
 		String bits = s.next();
-		while (s.hasNext() && !s.hasNext("P1")&&bits.length()!=width*height) {
+		while (s.hasNext() && !s.hasNext("P1") && bits.length() != width * height) {
 			bits = bits.concat(s.next());
 		}
-		
 
 		int index = 0;
 		for (int row = 0; row < height; row++) {
@@ -38,10 +37,10 @@ public class Instance {
 
 	@Override
 	public String toString() {
-		String s = className +"\n";
+		String s = className + "\n";
 		for (int row = 0; row < image.length; row++) {
 			for (int col = 0; col < image[0].length; col++) {
-				s = s.concat(String.valueOf(image[row][col])+"  ");
+				s = s.concat(String.valueOf(image[row][col]) + "  ");
 			}
 			s = s.concat("\n");
 		}

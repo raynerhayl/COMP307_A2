@@ -47,6 +47,9 @@ public class Main implements ActionListener {
 		}
 		g.println("Loading " + file.getName());
 		try {
+			classifier.attributes.clear();
+			classifier.classA="";
+			classifier.classB=""; // Clear all stored attributes and classes
 			Scanner fileScanner = new Scanner(file);
 			int line = 0;
 			Set<Instance> set = new HashSet<Instance>();
@@ -85,6 +88,11 @@ public class Main implements ActionListener {
 		return null;
 	}
 
+	/**
+	 * Sets the positions of all the nodes relative to the
+	 * maximum required width of the tree (for the widest level)
+	 * @param root
+	 */
 	public void layoutTree(Node root) {
 		Map<Integer, List<Node>> depthMap = new HashMap<Integer, List<Node>>();
 		g.root.maxDepth(depthMap);
